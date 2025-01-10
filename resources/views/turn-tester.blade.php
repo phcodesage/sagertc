@@ -25,56 +25,50 @@
         const Turn = document.getElementById('turn');
         const Err = document.getElementById('err');
         
-        const iceServers = [
-            // Test some STUN server
-            {
-                urls: 'stun:stun.l.google.com:19302',
-            },
-            // Test some TURN server
-            {
-                urls: 'turn:turnUrl',
-                username: 'turnUsername',
-                credential: 'turnPassword',
-            },
-        ];
+        let iceServers = [];
 
-        // Print iceServers config
-        Ice.innerHTML = JSON.stringify(iceServers, null, 4);
+        // Fetch TURN credentials from API
+        fetch('/api/turn-credentials')
+            .then(response => response.json())
+            .then(data => {
+                iceServers = data.iceServers;
+                // Update the displayed configuration
+                Ice.innerHTML = JSON.stringify(iceServers, null, 4);
+                
+                // Create RTCPeerConnection with new credentials
+                pc = new RTCPeerConnection({ iceServers });
+                
+                pc.onicecandidate = (e) => {
+                    if (!e.candidate) return;
 
-        // Test the connections
-        const pc = new RTCPeerConnection({
-            iceServers
-        });
+                    console.log(e.candidate.candidate);
 
-        pc.onicecandidate = (e) => {
-            if (!e.candidate) return;
+                    if (e.candidate.type == 'srflx' || e.candidate.candidate.includes('srflx')) {
+                        let ip = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/;
+                        let address = e.candidate.address 
+                            ? e.candidate.address 
+                            : e.candidate.candidate.match(ip);
+                        IP.innerHTML = '🟢 Your Public IP Address is ' + address;
+                        Stun.innerHTML = '🟢 The STUN server is reachable!';
+                    }
 
-            console.log(e.candidate.candidate);
+                    if (e.candidate.type == 'relay' || e.candidate.candidate.includes('relay')) {
+                        Turn.innerHTML = '🟢 The TURN server is reachable!';
+                    }
+                };
 
-            // If a srflx candidate was found, notify that the STUN server works!
-            if (e.candidate.type == 'srflx' || e.candidate.candidate.includes('srflx')) {
-                let ip = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/;
-                let address = e.candidate.address 
-                    ? e.candidate.address 
-                    : e.candidate.candidate.match(ip);
-                IP.innerHTML = '🟢 Your Public IP Address is ' + address;
-                Stun.innerHTML = '🟢 The STUN server is reachable!';
-            }
+                pc.onicecandidateerror = (e) => {
+                    console.error(e);
+                    Err.innerHTML = '🔴 Error: ' + e.errorText;
+                };
 
-            // If a relay candidate was found, notify that the TURN server works!
-            if (e.candidate.type == 'relay' || e.candidate.candidate.includes('relay')) {
-                Turn.innerHTML = '🟢 The TURN server is reachable!';
-            }
-        };
-
-        // handle error
-        pc.onicecandidateerror = (e) => {
-            console.error(e);
-            Err.innerHTML = '🔴 Error: ' + e.errorText;
-        };
-
-        pc.createDataChannel('test');
-        pc.createOffer().then(offer => pc.setLocalDescription(offer));
+                pc.createDataChannel('test');
+                pc.createOffer().then(offer => pc.setLocalDescription(offer));
+            })
+            .catch(error => {
+                console.error('Error fetching TURN credentials:', error);
+                Err.innerHTML = '🔴 Error fetching TURN credentials: ' + error.message;
+            });
     </script>
 </body>
 </html> 
