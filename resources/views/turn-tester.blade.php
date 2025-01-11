@@ -138,11 +138,23 @@
                     
                     <!-- Server Configuration Display -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            ICE Server Configuration
-                        </label>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                ICE Server Configuration
+                            </label>
+                            <button id="copyConfig" 
+                                    class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                                    title="Copy to clipboard">
+                                <!-- Copy icon -->
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                </svg>
+                                <span class="ml-1">Copy</span>
+                            </button>
+                        </div>
                         <pre id="ice" class="bg-gray-50 dark:bg-gray-800 rounded-md p-4 text-sm font-mono overflow-auto max-h-48 
-                                           border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"></pre>
+                                        border border-gray-200 dark:border-gray-700 
+                                        text-gray-900 dark:text-white"></pre>
                     </div>
 
                     <!-- Status Indicators -->
@@ -298,6 +310,45 @@
         stunUrlInput.addEventListener('focus', function(e) {
             if (e.target.value === 'stun:stun.l.google.com:19302') {
                 e.target.select();
+            }
+        });
+
+        // Add copy to clipboard functionality
+        document.getElementById('copyConfig').addEventListener('click', async function() {
+            const configText = document.getElementById('ice').textContent;
+            try {
+                await navigator.clipboard.writeText(configText);
+                
+                // Visual feedback
+                const button = this;
+                const originalContent = button.innerHTML;
+                button.innerHTML = `
+                    <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    <span class="ml-1 text-green-500">Copied!</span>
+                `;
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                // Error feedback
+                const button = this;
+                const originalContent = button.innerHTML;
+                button.innerHTML = `
+                    <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    <span class="ml-1 text-red-500">Failed to copy</span>
+                `;
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                }, 2000);
             }
         });
     </script>
