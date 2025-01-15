@@ -29,4 +29,14 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('purchases', PurchaseController::class)->except(['show']);
 });
 
+Route::middleware('guest')->group(function () {
+    Route::get('login', function () {
+        return view('auth.login');
+    })->name('login');
+
+    Route::get('register', function () {
+        return view('auth.register');
+    })->name('register');
+});
+
 require __DIR__.'/auth.php';
