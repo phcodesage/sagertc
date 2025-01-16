@@ -30,13 +30,17 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware('guest')->group(function () {
-    Route::get('login', function () {
-        return view('auth.login');
+    Route::get('/login', function () {
+        return view('auth.login', [
+            'darkMode' => true
+        ]);
     })->name('login');
 
-    Route::get('register', function () {
-        return view('auth.register');
+    Route::get('/register', function () {
+        return view('auth.register', [
+            'darkMode' => true
+        ]);
     })->name('register');
 });
 
-require __DIR__.'/auth.php';
+// require __DIR__.'/auth.php';
