@@ -1,22 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#0f1424]">
+<html lang="en" class="h-full">
 <head>
     <title>{{ config('app.name', 'SageRTC') }} - @yield('title')</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'dark-bg': '#1a1f36',
-                        'dark-input': '#2e3856',
-                    }
-                }
-            }
-        }
-    </script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="min-h-screen font-[Inter] bg-[#0f1424]">
     <div class="min-h-screen flex flex-col justify-center">
