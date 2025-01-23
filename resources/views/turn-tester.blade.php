@@ -163,7 +163,9 @@
             </div>
 
             <!-- Test Results -->
-            <div class="bg-white dark:bg-dark-surface rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <div id="testResults" 
+                 class="bg-white dark:bg-dark-surface rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6
+                        transform -translate-x-full opacity-0 transition-all duration-300 ease-in-out lg:hidden">
                 <div class="space-y-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white">Test Results</h3>
                     
@@ -270,6 +272,11 @@
         }
 
         document.getElementById('startTest').addEventListener('click', function() {
+            const testResults = document.getElementById('testResults');
+            // Show results with animation
+            testResults.classList.remove('-translate-x-full', 'opacity-0', 'lg:hidden');
+            testResults.classList.add('translate-x-0', 'opacity-100');
+
             // Get values from inputs
             const stunUrl = document.getElementById('stunUrl').value;
             const turnUrl = document.getElementById('turnUrl').value;
@@ -380,6 +387,28 @@
                 setTimeout(() => {
                     button.innerHTML = originalContent;
                 }, 2000);
+            }
+        });
+
+        // Add reset functionality to hide results
+        document.querySelector('button[onclick="window.location.reload()"]').addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent page reload
+            const testResults = document.getElementById('testResults');
+            // Hide results with animation
+            testResults.classList.remove('translate-x-0', 'opacity-100');
+            testResults.classList.add('-translate-x-full', 'opacity-0', 'lg:hidden');
+            
+            // Reset form and results
+            document.getElementById('testForm').reset();
+            IP.innerHTML = 'Waiting to start test...';
+            updateStatus(Stun, false, 'Waiting to start test...');
+            updateStatus(Turn, false, 'Waiting to start test...');
+            Err.innerHTML = 'No errors reported';
+            Ice.innerHTML = '';
+            
+            if (pc) {
+                pc.close();
+                pc = null;
             }
         });
     </script>
