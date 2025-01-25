@@ -39,14 +39,23 @@
                             Dashboard
                         </a>
                     @else
-                        <a href="{{ route('login') }}" 
-                           class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                            Log in
-                        </a>
-                        <a href="{{ route('register') }}" 
-                           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-dark-surface">
-                            Register
-                        </a>
+                        @unless(request()->routeIs('login'))
+                            <a href="{{ route('login') }}" 
+                               class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white 
+                                      px-3 py-2 rounded-md text-sm font-medium">
+                                Log in
+                            </a>
+                        @endunless
+                        
+                        @unless(request()->routeIs('register'))
+                            <a href="{{ route('register') }}" 
+                               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium 
+                                      rounded-md text-white bg-blue-600 hover:bg-blue-700 
+                                      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+                                      dark:focus:ring-offset-dark-surface">
+                                Register
+                            </a>
+                        @endunless
                     @endauth
                     @include('partials.theme-toggle')
                 </div>
