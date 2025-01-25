@@ -88,10 +88,14 @@
         </div>
 
         <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="relative flex flex-col lg:grid lg:grid-cols-2 gap-6">
             <!-- Test Form -->
-            <div class="bg-white dark:bg-dark-surface rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                <form id="testForm" class="space-y-6">
+            <div id="testForm" 
+                 class="bg-white dark:bg-dark-surface rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6
+                        transition-all duration-300 ease-in-out
+                        mx-auto w-full max-w-2xl
+                        col-span-2 lg:col-span-1">
+                <form class="space-y-6">
                     <!-- STUN Configuration -->
                     <div class="space-y-4">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-white">STUN Server Configuration</h3>
@@ -165,7 +169,8 @@
             <!-- Test Results -->
             <div id="testResults" 
                  class="bg-white dark:bg-dark-surface rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6
-                        transform -translate-x-full opacity-0 transition-all duration-300 ease-in-out lg:hidden">
+                        transform -translate-x-full opacity-0 transition-all duration-300 ease-in-out hidden
+                        lg:col-start-2">
                 <div class="space-y-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white">Test Results</h3>
                     
@@ -273,9 +278,15 @@
 
         document.getElementById('startTest').addEventListener('click', function() {
             const testResults = document.getElementById('testResults');
+            const testForm = document.getElementById('testForm');
+            
             // Show results with animation
-            testResults.classList.remove('-translate-x-full', 'opacity-0', 'lg:hidden');
+            testResults.classList.remove('-translate-x-full', 'opacity-0', 'hidden');
             testResults.classList.add('translate-x-0', 'opacity-100');
+            
+            // Move form to the left
+            testForm.classList.add('lg:translate-x-0');
+            testForm.classList.remove('mx-auto');
 
             // Get values from inputs
             const stunUrl = document.getElementById('stunUrl').value;
@@ -390,13 +401,19 @@
             }
         });
 
-        // Add reset functionality to hide results
+        // Update reset functionality
         document.querySelector('button[onclick="window.location.reload()"]').addEventListener('click', function(e) {
-            e.preventDefault(); // Prevent page reload
+            e.preventDefault();
             const testResults = document.getElementById('testResults');
+            const testForm = document.getElementById('testForm');
+            
             // Hide results with animation
             testResults.classList.remove('translate-x-0', 'opacity-100');
-            testResults.classList.add('-translate-x-full', 'opacity-0', 'lg:hidden');
+            testResults.classList.add('-translate-x-full', 'opacity-0', 'hidden');
+            
+            // Center the form again
+            testForm.classList.remove('lg:translate-x-0');
+            testForm.classList.add('mx-auto');
             
             // Reset form and results
             document.getElementById('testForm').reset();
