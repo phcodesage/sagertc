@@ -10,8 +10,7 @@ class PurchaseController extends Controller
 {
     public function index()
     {
-        $purchases = Auth::user()->purchases;
-        return view('dashboard', compact('purchases'));
+        return view('dashboard');
     }
 
     public function create()
